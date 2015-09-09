@@ -1,5 +1,5 @@
 description = "a module to compute SNRs and PSDs from frames"
-author = "Reed Essick (reed.essick@ligo.org)"
+author = "Reed Essick <reed.essick@ligo.org>, Ryan Lynch <ryan.lynch@ligo.org>"
 
 from pylal import Fr
 import numpy as np
