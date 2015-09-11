@@ -112,7 +112,7 @@ def frames2vect( frames, channel, start=-np.infty, stop=np.infty ):
         vect, s, _, dt, _, _ = Fr.frgetvect1d(frame, channel, start=frame_span, span=frame_span)
         N = len(vect)
         v = np.concatenate( (v, vect) )
-        t = np.concatenate( (t, np.arange(s, s+dt*N, N)) )
+        t = np.concatenate( (t, np.arange(s, s+dt*N, dt)) )
 
     if not len(v):
         raise ValueError("no Data found!")
