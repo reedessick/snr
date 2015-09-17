@@ -137,18 +137,20 @@ def frames2PSD( frames, channel, start=-np.infty, stop=np.infty, num_segs=12, ov
     seglen = dn*dt
 
     ### compute dfts for each segment separately
+    tukey_win = tukey( dn, alpha=tukey_alpha )
     if dn%2:
         psds = np.empty((dn/2+1, num_segs), complex)
     else:
         psds = np.empty((dn/2, num_segs), complex)
     for segNo in xrange(num_segs):
         start = segNo*(dn - o)
-        psds[:,segNo], freqs = dft(vect[start:start+dn], dt=dt)
+        psds[:,segNo], freqs = dft(vect[start:start+dn]*tukey_win, dt=dt)
 
     ### average
     mean_psd = np.sum(psds.real**2 + psds.imag**2, axis=1) / (seglen*num_segs)
 
-    return 2*mean_psd, freqs ### factor of 2 makes this a one-sided psd
+    return PSD( freqs, 2*mean_psd ) ### factor of 2 makes this a one-sided psd
+#    return 2*mean_psd, freqs ### factor of 2 makes this a one-sided psd
 
 class PSD(object):
         """
