@@ -89,7 +89,7 @@ def extract_start_dur( filename, suffix=".gwf" ):
     """
     returns the start, dur from a standard LIGO filename
     """
-    return (int(l) for l in filename[:-len(suffix)].split("-")[-2:])
+    return [int(l) for l in filename[:-len(suffix)].split("-")[-2:]]
 
 #=================================================
 
@@ -106,10 +106,10 @@ def frames2vect( frames, channel, start=-np.infty, stop=np.infty ):
     t = np.array([])
     for (s, d), frame in frames:
         frame_start = max(s, start)
-        frame_stop = min(s+d, start+span)
+        frame_stop = min(s+d, stop)
         frame_span = frame_stop - frame_start
 
-        vect, s, _, dt, _, _ = Fr.frgetvect1d(frame, channel, start=frame_span, span=frame_span)
+        vect, s, _, dt, _, _ = Fr.frgetvect1d(frame, channel, start=frame_start, span=frame_span)
         N = len(vect)
         v = np.concatenate( (v, vect) )
         t = np.concatenate( (t, np.arange(s, s+dt*N, dt)) )
@@ -137,10 +137,13 @@ def frames2PSD( frames, channel, start=-np.infty, stop=np.infty, num_segs=12, ov
     seglen = dn*dt
 
     ### compute dfts for each segment separately
-    psds = np.empty((n/2, num_segs), complex)
+    if dn%2:
+        psds = np.empty((dn/2+1, num_segs), complex)
+    else:
+        psds = np.empty((dn/2, num_segs), complex)
     for segNo in xrange(num_segs):
         start = segNo*(dn - o)
-        psds[:,segNo], freqs = dft(vec[start:start+dn], dt=dt)
+        psds[:,segNo], freqs = dft(vect[start:start+dn], dt=dt)
 
     ### average
     mean_psd = np.sum(psds.real**2 + psds.imag**2, axis=1) / (seglen*num_segs)
