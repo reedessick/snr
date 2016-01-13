@@ -78,7 +78,8 @@ def idft(dft_vec, dt=1.0):
         else: ### even number of points
                 vec[N:] = np.conjugate(dft_vec)[::-1]
 
-        vec = np.fft.ifft( vec ) / seglen
+        vec = np.fft.ifft( vec ) * dt ### fft normalizes the sum with (1/n = dt/seglen) 
+                                      ### and we want the actual conversion to be 1/seglen to approximate the integral
         time = np.arange(0, seglen, dt)
 
         return vec, time
