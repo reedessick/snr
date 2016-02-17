@@ -119,6 +119,7 @@ def frames2vect( frames, channel, start=-np.infty, stop=np.infty ):
         raise ValueError("no Data found!")
 
     truth = (start <= t)*(t <= stop)
+    t = t[truth]
     return v[truth], t[0], t[1]-t[0]
 
 #=================================================
